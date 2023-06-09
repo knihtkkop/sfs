@@ -1,0 +1,73 @@
+这是个人的第一个题解,看了java版本的关于Prim的题解,感觉大家写的都有点冗杂,代码不够简洁和清晰,简单思考了一下,写了一个比较好看的懂的版本
+我感觉是这些题解里面比较容易看懂的.Prim算法的核心就是点解锁边,边解锁点,个人而言,只要熟悉图的BFS,那么Prim算法也就手到擒来,
+比K算法还要简单,我的这个写法Prim算法的的模版,拿下直接套题目就行,我这个建图的方法稍微好一点,时间优化到了60ms
+
+
+class Solution {
+    public static class Edge{
+        int from;
+        int to;
+        int weight;
+        public Edge(int f,int t,int w){
+            from=f;
+            to=t;
+            weight=w;
+        }
+    }
+    //prim
+    public int minimumCost(int n, int[][] connections) {
+        //哈希表建图法,将有权边用一个类包装起来,减少额外空间使用和算法复杂度
+        Map<Integer,List<Edge>> graph = new HashMap<>();
+        for (int[] arr:connections){
+            int from = arr[0];
+            int to = arr[1];
+            int weight =arr[2];
+            //无向图转成双向图
+            Edge e1 = new Edge(from,to,weight);
+            Edge e2 = new Edge(to,from,weight);
+            if (graph.get(from)==null){
+                List<Edge> list1 = new ArrayList<>();
+                list1.add(e1);
+                graph.put(from,list1);
+            }else {
+                graph.get(from).add(e1);
+            }
+            if (graph.get(to)==null){
+                List<Edge> list1 = new ArrayList<>();
+                list1.add(e2);
+                graph.put(to,list1);
+            }else {
+                graph.get(to).add(e2);
+            }
+        }
+        //优先级队列 核心
+        Queue<Edge> queue = new PriorityQueue<>((Edge a,Edge b) ->(a.weight-b.weight));
+        Set<Integer> set = new HashSet<>();
+        int ans=0;
+        //随机选一个点加进去,就选第一个点
+        for (Edge edge:graph.get(connections[0][0])){
+            queue.offer(edge);
+        }
+        set.add(connections[0][0]);
+        while (!queue.isEmpty()){
+            //边解锁点 点解锁边
+            Edge edge = queue.poll();
+            int from = edge.from;
+            int to = edge.to;
+            int weight = edge.weight;
+            if (!set.contains(to)){
+                set.add(to);
+                ans+=weight;
+                for (Edge e:graph.get(to)){
+                    queue.offer(e);
+                }
+            }
+        }
+        //set的大小和n不一致就返回-1
+        if (set.size()==n){
+            return ans;
+        }else {
+            return -1;
+        }
+    }
+}
