@@ -1,0 +1,28 @@
+//LC 199. 二叉树的右视图
+//本题解题思路很自然,题目要的就是每一层的最右侧的位置的值
+//那么自然联想到层序遍历 取每一层最后一个位置的值
+//也就是使用BFS 广度优先算法
+public List<Integer> rightSideView(TreeNode root) {
+        if (root==null){
+            return new ArrayList<>();
+        }
+        List<Integer> ans = new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()){
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode cur = queue.poll();
+                if (i==size-1&&cur!=null){
+                    ans.add(cur.val);
+                }
+                if (cur.left!=null){
+                    queue.add(cur.left);
+                }
+                if (cur.right!=null){
+                    queue.add(cur.right);
+                }
+            }
+        }
+        return ans;
+    }
