@@ -1,0 +1,37 @@
+//TODO 394. 字符串解码
+//相似的题目还有 基本计算器III
+    public String decodeString(String s) {
+
+        if (s==null||s.length()==0){
+            return "";
+        }
+       return process(s.toCharArray(),0)[0];
+    }
+
+    //对于这种有括号的题目 括号内的部分递归走后续
+    //递归的终止条件是遇到反括号 返回答案
+    //用数组形式接住返回的字符串以及索引位置
+    //接住之后就可以处理
+    public String[] process(char[] chars,int index){
+        StringBuilder ans = new StringBuilder();
+        int n=0;
+        for (int i=index;i<chars.length;i++){
+
+            if (chars[i]>='0'&&chars[i]<='9'){
+                n = n*10+chars[i]-'0';
+            }else if (chars[i]>='a'&&chars[i]<='z'){
+                ans.append(chars[i]);
+            } else if (chars[i] == '[') {
+                String[] strs = process(chars,i+1);
+                i = Integer.parseInt(strs[1]);
+                while (n>0){
+                    ans.append(strs[0]);
+                    n--;
+                }
+            }else {
+                //遇到了右括号 计算结果
+                return new String[]{ans.toString(),i+""};
+            }
+        }
+        return new String[]{ans.toString()};
+    }
